@@ -25,7 +25,7 @@
 // TODO: Sélectionner le bouton de recherche avec getElementById
 let searchbtn = document.getElementById("search-btn");
 // TODO: Sélectionner l'input de recherche
-let artistinput = document.getElementById("artist-input");
+let input = document.getElementById("artist-input");
 // TODO: Sélectionner le conteneur des résultats
 let results = document.getElementById("results-container");
 // TODO: Sélectionner l'élément audio pour jouer la musique
@@ -47,13 +47,12 @@ function searchArtist() {
     results.innerHTML = "";
 
    // 2. Récupérer ce que l'utilisateur a tapé dans l'input
-    let artistName = document.getElementById("artist-input");
-    let inputValue = artistName.value;
+    let artistName = input.value;
    
    // 3. Vérifier si artistName est vide
    //    - Si oui : afficher un message dans le conteneur
    //    - Puis faire "return;" pour arrêter la fonction
-    if (inputValue === "") {
+    if (!artistName) {
         results.innerHTML = "<p> This artist have a few songs </p>";
         return;
     }
@@ -95,14 +94,25 @@ function afficherTrack(track) {
 
    // 1. Vérifier que track.preview existe (certains morceaux n'ont pas de preview)
    //    Si pas de preview, on ne crée pas de carte.
-    if (!track.preview == "") {
-        results.innerHTML = "<p> Never heard of this artist :C </p>";
+    if (!track.preview) {
         return;
     }
 
    // 2. Créer un élément div pour la carte
    //    - lui ajouter la classe "track-card"
+   let card = document.createElement("div");
+   card.classList.add("track-card");
    // 3. Ajouter le HTML de la carte dans la div avec innerHTML :
+   card.innerHTML = 
+       `<div class="cover-container">
+         <img src="${track.album.cover_medium}" class="cover-image">
+         <div class="play-overlay">
+           <span class="play-icon">▶️</span>
+         </div>
+      </div>
+      <h3>${track.title}</h3>
+      <p>${track.artist.name}</p>
+    </div>`;
    //    - une div.cover-container
    //    - une image avec la pochette
    //    - un overlay avec l’icône ▶️
@@ -121,14 +131,18 @@ function afficherTrack(track) {
    //   <p>Nom de l’artiste</p>
    // </div>
    //
+   results.appendChild(card);
 
 
    // 4. Ajouter un événement "click" sur la carte
    //    Quand on clique :
+   card.addEventListener("click", function () {
+      audio.src = track.preview;
+      audio.play();
+   });
    //      - changer la source de l'audio (audio.src = track.preview)
    //      - lancer la lecture (audio.play())
    //
-
 
    // 5. Ajouter la carte dans le conteneur des résultats
 }
